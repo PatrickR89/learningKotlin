@@ -4,87 +4,63 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import com.patrickr.calculatorapp.databinding.ActivityMainBinding
 import java.lang.NumberFormatException
 
 private const val STATE_PENDING_OPERATION = "PendingOperation"
 private const val STATE_OPERAND_ONE = "OperandOne"
+private const val STATE_OPERAND_ONE_STORED = "OperandOne_Stored"
 
 class MainActivity : AppCompatActivity() {
-	private lateinit var result: EditText
-	private lateinit var newNumber: EditText
-	private val displayOperation by lazy(LazyThreadSafetyMode.NONE) {
-		findViewById<TextView>(R.id.operation)
-	}
+	private lateinit var activityMain: ActivityMainBinding
 
 	private var operandOne: Double? = null
 	private var pendingOperation = "="
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_main)
-		setupInputs()
+		activityMain = ActivityMainBinding.inflate(layoutInflater)
+		setContentView(activityMain.root)
+		setupInputs(activityMain)
 	}
 
-	private fun setupInputs() {
-		result = findViewById(R.id.result)
-		newNumber = findViewById(R.id.newNumber)
-
-		val button0: Button = findViewById(R.id.button0)
-		val button1: Button = findViewById(R.id.button1)
-		val button2: Button = findViewById(R.id.button2)
-		val button3: Button = findViewById(R.id.button3)
-		val button4: Button = findViewById(R.id.button4)
-		val button5: Button = findViewById(R.id.button5)
-		val button6: Button = findViewById(R.id.button6)
-		val button7: Button = findViewById(R.id.button7)
-		val button8: Button = findViewById(R.id.button8)
-		val button9: Button = findViewById(R.id.button9)
-		val buttonDot: Button = findViewById(R.id.buttonDot)
-
-		val buttonEquals: Button = findViewById(R.id.buttonEqual)
-		val buttonPlus: Button = findViewById(R.id.buttonPlus)
-		val buttonMinus: Button = findViewById(R.id.buttonMinus)
-		val buttonMultiply: Button = findViewById(R.id.buttonMultiply)
-		val buttonDivide: Button = findViewById(R.id.buttonDivide)
-
+	private fun setupInputs(binding: ActivityMainBinding) {
 		val listener = View.OnClickListener { view ->
 			val button = view as Button
-			newNumber.append(button.text)
+			binding.newNumber.append(button.text)
 		}
 
-		button0.setOnClickListener(listener)
-		button1.setOnClickListener(listener)
-		button2.setOnClickListener(listener)
-		button3.setOnClickListener(listener)
-		button4.setOnClickListener(listener)
-		button5.setOnClickListener(listener)
-		button6.setOnClickListener(listener)
-		button7.setOnClickListener(listener)
-		button8.setOnClickListener(listener)
-		button9.setOnClickListener(listener)
-		buttonDot.setOnClickListener(listener)
+		binding.button0.setOnClickListener(listener)
+		binding.button1.setOnClickListener(listener)
+		binding.button2.setOnClickListener(listener)
+		binding.button3.setOnClickListener(listener)
+		binding.button4.setOnClickListener(listener)
+		binding.button5.setOnClickListener(listener)
+		binding.button6.setOnClickListener(listener)
+		binding.button7.setOnClickListener(listener)
+		binding.button8.setOnClickListener(listener)
+		binding.button9.setOnClickListener(listener)
+		binding.buttonDot.setOnClickListener(listener)
 
 		val opListener = View.OnClickListener { view ->
 			val operation = (view as Button).text.toString()
 			try {
-				val value = newNumber.text.toString().toDouble()
+				val value = binding.newNumber.text.toString().toDouble()
 				performOperation(value, operation)
 			} catch (e: NumberFormatException) {
-				newNumber.setText("")
+				binding.newNumber.setText("")
 			}
 
 
 			pendingOperation = operation
-			displayOperation.text = pendingOperation
+			binding.operation.text = pendingOperation
 		}
 
-		buttonEquals.setOnClickListener(opListener)
-		buttonPlus.setOnClickListener(opListener)
-		buttonMinus.setOnClickListener(opListener)
-		buttonDivide.setOnClickListener(opListener)
-		buttonMultiply.setOnClickListener(opListener)
+		binding.buttonEqual.setOnClickListener(opListener)
+		binding.buttonPlus.setOnClickListener(opListener)
+		binding.buttonMinus.setOnClickListener(opListener)
+		binding.buttonDivide.setOnClickListener(opListener)
+		binding.buttonMultiply.setOnClickListener(opListener)
 	}
 
 	private fun performOperation(value: Double, operation: String) {
@@ -114,8 +90,8 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun displayOperand(operand: Double) {
-		result.setText(operand.toString())
-		newNumber.setText("")
+		activityMain.result.setText(operand.toString())
+		activityMain.newNumber.setText("")
 	}
 
 	override fun onSaveInstanceState(outState: Bundle) {
@@ -124,5 +100,20 @@ class MainActivity : AppCompatActivity() {
 		outState.putString(STATE_PENDING_OPERATION, pendingOperation)
 		val operandValue = operandOne ?: return
 		outState.putDouble(STATE_OPERAND_ONE, operandValue)
+		outState.putBoolean(STATE_OPERAND_ONE_STORED, true)
+	}
+
+	override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+		super.onRestoreInstanceState(savedInstanceState)
+		operandOne = if (
+			savedInstanceState.getBoolean(STATE_OPERAND_ONE_STORED, false)
+		) {
+			savedInstanceState.getDouble(STATE_OPERAND_ONE)
+		} else {
+			null
+		}
+
+		pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION, "=")
+		activityMain.operation.text = pendingOperation
 	}
 }
