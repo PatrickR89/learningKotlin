@@ -27,40 +27,54 @@ class MainActivity : AppCompatActivity() {
 	private fun setupInputs(binding: ActivityMainBinding) {
 		val listener = View.OnClickListener { view ->
 			val button = view as Button
-			binding.newNumber.append(button.text)
+			activityMain.newNumber.append(button.text)
 		}
 
-		binding.button0.setOnClickListener(listener)
-		binding.button1.setOnClickListener(listener)
-		binding.button2.setOnClickListener(listener)
-		binding.button3.setOnClickListener(listener)
-		binding.button4.setOnClickListener(listener)
-		binding.button5.setOnClickListener(listener)
-		binding.button6.setOnClickListener(listener)
-		binding.button7.setOnClickListener(listener)
-		binding.button8.setOnClickListener(listener)
-		binding.button9.setOnClickListener(listener)
-		binding.buttonDot.setOnClickListener(listener)
+		activityMain.button0.setOnClickListener(listener)
+		activityMain.button1.setOnClickListener(listener)
+		activityMain.button2.setOnClickListener(listener)
+		activityMain.button3.setOnClickListener(listener)
+		activityMain.button4.setOnClickListener(listener)
+		activityMain.button5.setOnClickListener(listener)
+		activityMain.button6.setOnClickListener(listener)
+		activityMain.button7.setOnClickListener(listener)
+		activityMain.button8.setOnClickListener(listener)
+		activityMain.button9.setOnClickListener(listener)
+		activityMain.buttonDot.setOnClickListener(listener)
+		activityMain.buttonNegative.setOnClickListener { _ ->
+			val value = activityMain.newNumber.text.toString()
+			if (value.isEmpty()) {
+				activityMain.newNumber.setText("-")
+			} else {
+				try {
+					var doubleValue = value.toDouble()
+					doubleValue *= -1
+					activityMain.newNumber.setText(doubleValue.toString())
+				} catch (error: NumberFormatException) {
+					activityMain.newNumber.setText("")
+				}
+			}
+		}
 
 		val opListener = View.OnClickListener { view ->
 			val operation = (view as Button).text.toString()
 			try {
-				val value = binding.newNumber.text.toString().toDouble()
+				val value = activityMain.newNumber.text.toString().toDouble()
 				performOperation(value, operation)
 			} catch (e: NumberFormatException) {
-				binding.newNumber.setText("")
+				activityMain.newNumber.setText("")
 			}
 
 
 			pendingOperation = operation
-			binding.operation.text = pendingOperation
+			activityMain.operation.text = pendingOperation
 		}
 
-		binding.buttonEqual.setOnClickListener(opListener)
-		binding.buttonPlus.setOnClickListener(opListener)
-		binding.buttonMinus.setOnClickListener(opListener)
-		binding.buttonDivide.setOnClickListener(opListener)
-		binding.buttonMultiply.setOnClickListener(opListener)
+		activityMain.buttonEqual.setOnClickListener(opListener)
+		activityMain.buttonPlus.setOnClickListener(opListener)
+		activityMain.buttonMinus.setOnClickListener(opListener)
+		activityMain.buttonDivide.setOnClickListener(opListener)
+		activityMain.buttonMultiply.setOnClickListener(opListener)
 	}
 
 	private fun performOperation(value: Double, operation: String) {
@@ -85,6 +99,7 @@ class MainActivity : AppCompatActivity() {
 			"+" -> operand += value
 			"-" -> operand -= value
 			"*" -> operand *= value
+
 		}
 		displayOperand(operand)
 	}
