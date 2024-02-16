@@ -8,6 +8,9 @@ import android.widget.EditText
 import android.widget.TextView
 import java.lang.NumberFormatException
 
+private const val STATE_PENDING_OPERATION = "PendingOperation"
+private const val STATE_OPERAND_ONE = "OperandOne"
+
 class MainActivity : AppCompatActivity() {
 	private lateinit var result: EditText
 	private lateinit var newNumber: EditText
@@ -85,28 +88,41 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun performOperation(value: Double, operation: String) {
-		if (operandOne == null) {
+		var operand = operandOne ?: run {
 			operandOne = value
-		} else {
-			if (pendingOperation == "=") {
-				pendingOperation = operation
-			}
-
-			when (pendingOperation) {
-				"=" -> operandOne = value
-				"/" -> operandOne = if (value == 0.0) {
-					Double.NaN
-				} else {
-					operandOne!! / value
-				}
-
-				"+" -> operandOne = operandOne!! + value
-				"-" -> operandOne = operandOne!! - value
-				"*" -> operandOne = operandOne!! * value
-			}
+			displayOperand(value)
+			return
 		}
 
-		result.setText(operandOne.toString())
+		if (pendingOperation == "=") {
+			pendingOperation = operation
+		}
+
+		when (pendingOperation) {
+			"=" -> operand = value
+			"/" -> operand = if (value == 0.0) {
+				Double.NaN
+			} else {
+				operand / value
+			}
+
+			"+" -> operand += value
+			"-" -> operand -= value
+			"*" -> operand *= value
+		}
+		displayOperand(operand)
+	}
+
+	private fun displayOperand(operand: Double) {
+		result.setText(operand.toString())
 		newNumber.setText("")
+	}
+
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
+
+		outState.putString(STATE_PENDING_OPERATION, pendingOperation)
+		val operandValue = operandOne ?: return
+		outState.putDouble(STATE_OPERAND_ONE, operandValue)
 	}
 }
