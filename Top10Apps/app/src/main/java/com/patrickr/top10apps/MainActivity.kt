@@ -34,17 +34,22 @@ class FeedEntry {
 class MainActivity : AppCompatActivity() {
 	private val TAG = "MainActivity"
 	private lateinit var activityMain: ActivityMainBinding
+	private val downloadData by lazy { DownloadData(this, activityMain.xmlListView) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		activityMain = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(activityMain.root)
 		Log.d(TAG, "onCreate called")
-		val downloadData = DownloadData(this, activityMain.xmlListView)
 		downloadData.execute(
 			"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
 		)
 		Log.d(TAG, "onCreate done")
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		downloadData.cancel(true)
 	}
 
 	companion object {
