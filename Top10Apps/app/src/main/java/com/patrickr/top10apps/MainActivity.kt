@@ -1,17 +1,15 @@
 package com.patrickr.top10apps
 
-import android.app.LauncherActivity.ListItem
 import android.content.Context
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.ArrayAdapter
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ListView
 import java.net.URL
 import com.patrickr.top10apps.databinding.ActivityMainBinding
-import com.patrickr.top10apps.databinding.ListItemBinding
 import kotlin.properties.Delegates
 
 class FeedEntry {
@@ -34,22 +32,50 @@ class FeedEntry {
 class MainActivity : AppCompatActivity() {
 	private val TAG = "MainActivity"
 	private lateinit var activityMain: ActivityMainBinding
-	private val downloadData by lazy { DownloadData(this, activityMain.xmlListView) }
+//	private val downloadData by lazy { DownloadData(this, activityMain.xmlListView) }
+private var downloadData: DownloadData? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		activityMain = ActivityMainBinding.inflate(layoutInflater)
+
 		setContentView(activityMain.root)
-		Log.d(TAG, "onCreate called")
-		downloadData.execute(
+		downloadData = DownloadData(this, activityMain.xmlListView)
+		downloadData?.execute(
 			"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
 		)
-		Log.d(TAG, "onCreate done")
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
-		downloadData.cancel(true)
+		downloadData?.cancel(true)
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		super.onCreateOptionsMenu(menu)
+		Log.d(TAG, "Creating menu from: $menu")
+		menuInflater.inflate(R.menu.feeds_menu, menu)
+		return true
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem): Boolean {
+		val feedUrl: String
+		when (item.itemId) {
+			R.id.buttonFree ->
+				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+			R.id.buttonPaid ->
+				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml"
+			R.id.buttonSongs ->
+				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"
+			else ->
+				return super.onOptionsItemSelected(item)
+		}
+		downloadUrl(feedUrl)
+		return true
+	}
+
+	private fun downloadUrl(feedUrl: String) {
+		downloadData?.execute(feedUrl)
 	}
 
 	companion object {
@@ -64,7 +90,6 @@ class MainActivity : AppCompatActivity() {
 			}
 
 			override fun doInBackground(vararg params: String?): String {
-				Log.d(TAG, "doInBackground: parameter is ${params[0]}")
 				val param = params[0] ?: return ""
 				val rssFeed = downloadXML(param)
 				if (rssFeed.isEmpty()) {
@@ -75,13 +100,11 @@ class MainActivity : AppCompatActivity() {
 
 			override fun onPostExecute(result: String?) {
 				super.onPostExecute(result)
-				Log.d(TAG, "onPostExecute: parameter os $result")
 				val parseApplications = ParseApplications()
 				if (result != null) {
 					parseApplications.parse(result)
 				}
-//				val arrayAdapter = ArrayAdapter<FeedEntry>(propContext, R.layout.list_item, parseApplications.applications)
-//				propListView.adapter = arrayAdapter
+
 				val feedAdapter = FeedAdapter(propContext, R.layout.list_record, parseApplications.applications)
 				propListView.adapter = feedAdapter
 			}
@@ -89,8 +112,6 @@ class MainActivity : AppCompatActivity() {
 			private fun downloadXML(urlPath: String): String {
 				return URL(urlPath).readText()
 			}
-
-
 		}
 	}
 }

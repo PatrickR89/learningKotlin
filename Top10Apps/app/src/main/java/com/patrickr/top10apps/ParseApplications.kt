@@ -1,6 +1,5 @@
 package com.patrickr.top10apps
 
-import android.nfc.Tag
 import android.util.Log
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
@@ -11,7 +10,6 @@ class ParseApplications {
 	val applications = ArrayList<FeedEntry>()
 
 	fun parse(xmlData: String): Boolean {
-		Log.d(TAG, "Parse called with $xmlData")
 		var status = true
 		var inEntry = false
 		var textValue = ""
@@ -27,7 +25,6 @@ class ParseApplications {
 				val tagName = xpp.name?.lowercase()
 				when (eventType) {
 					XmlPullParser.START_TAG ->  {
-						Log.d(TAG, "parse: Starting for $tagName")
 						if (tagName == "entry") {
 							inEntry = true
 						}
@@ -35,7 +32,6 @@ class ParseApplications {
 
 					XmlPullParser.TEXT -> textValue = xpp.text
 					XmlPullParser.END_TAG -> {
-						Log.d(TAG, "parse: Ending tag for $tagName")
 						if (inEntry) {
 							when (tagName) {
 								"entry" -> {
@@ -55,11 +51,6 @@ class ParseApplications {
 				}
 
 				eventType = xpp.next()
-			}
-
-			for (app in applications) {
-				Log.d(TAG, "**************")
-				Log.d(TAG, app.toString())
 			}
 		} catch (error: Exception) {
 			error.printStackTrace()
