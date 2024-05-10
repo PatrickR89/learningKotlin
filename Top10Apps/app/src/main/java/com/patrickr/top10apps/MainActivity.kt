@@ -44,11 +44,13 @@ private var downloadData: DownloadData? = null
 		downloadData?.execute(
 			"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
 		)
+		downloadData = null
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
 		downloadData?.cancel(true)
+		downloadData = null
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -60,13 +62,16 @@ private var downloadData: DownloadData? = null
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		val feedUrl: String
-		when (item.itemId) {
+		feedUrl = when (item.itemId) {
 			R.id.buttonFree ->
-				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+				"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+
 			R.id.buttonPaid ->
-				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml"
+				"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml"
+
 			R.id.buttonSongs ->
-				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"
+				"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"
+
 			else ->
 				return super.onOptionsItemSelected(item)
 		}
@@ -75,7 +80,11 @@ private var downloadData: DownloadData? = null
 	}
 
 	private fun downloadUrl(feedUrl: String) {
+		Log.d(TAG, "downloadUrl(feedUrl:) start async task")
+		downloadData = DownloadData(this, activityMain.xmlListView)
 		downloadData?.execute(feedUrl)
+		downloadData = null
+		Log.d(TAG, "downloadUrl(feedUrl:) done")
 	}
 
 	companion object {
