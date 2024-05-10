@@ -33,16 +33,23 @@ class MainActivity : AppCompatActivity() {
 	private val TAG = "MainActivity"
 	private lateinit var activityMain: ActivityMainBinding
 //	private val downloadData by lazy { DownloadData(this, activityMain.xmlListView) }
-private var downloadData: DownloadData? = null
+	private var downloadData: DownloadData? = null
+	private var feedUrl: String = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
+	private var limit: Int = 10
+	private var feedCachedUrl = "INVALIDATED"
+	private val STATE_URL = "feedUrl"
+	private val STATE_LIMIT = "feedLimit"
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		activityMain = ActivityMainBinding.inflate(layoutInflater)
-
+		if (savedInstanceState != null) {
+			feedUrl = savedInstanceState.getString(STATE_URL)!!
+			limit = savedInstanceState.getInt(STATE_LIMIT)
+		}
 		setContentView(activityMain.root)
 		downloadData = DownloadData(this, activityMain.xmlListView)
-		downloadData?.execute(
-			"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+		downloadData?.execute(feedUrl.format(limit)
 		)
 		downloadData = null
 	}
@@ -57,33 +64,56 @@ private var downloadData: DownloadData? = null
 		super.onCreateOptionsMenu(menu)
 		Log.d(TAG, "Creating menu from: $menu")
 		menuInflater.inflate(R.menu.feeds_menu, menu)
+		if (limit == 10) {
+			menu?.findItem(R.id.menu10)?.isChecked = true
+		} else {
+			menu?.findItem(R.id.menu25)?.isChecked = true
+		}
 		return true
 	}
 
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
+		outState.putString(STATE_URL, feedUrl)
+		outState.putInt(STATE_LIMIT, limit)
+	}
+
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
-		val feedUrl: String
-		feedUrl = when (item.itemId) {
+		 when (item.itemId) {
 			R.id.buttonFree ->
-				"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"
+				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=%d/xml"
 
 			R.id.buttonPaid ->
-				"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=10/xml"
+				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/toppaidapplications/limit=%d/xml"
 
 			R.id.buttonSongs ->
-				"http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"
+				feedUrl = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=%d/xml"
 
+			R.id.menu10, R.id.menu25 -> {
+				if (!item.isChecked) {
+					item.isChecked = true
+					limit = 35 - limit
+					Log.d(TAG, "")
+				}
+			}
+			 R.id.menuRefresh -> feedCachedUrl = "INVALIDATED"
 			else ->
 				return super.onOptionsItemSelected(item)
 		}
-		downloadUrl(feedUrl)
+		downloadUrl(feedUrl.format(limit))
 		return true
 	}
 
 	private fun downloadUrl(feedUrl: String) {
 		Log.d(TAG, "downloadUrl(feedUrl:) start async task")
-		downloadData = DownloadData(this, activityMain.xmlListView)
-		downloadData?.execute(feedUrl)
-		downloadData = null
+		if (feedUrl != feedCachedUrl) {
+			downloadData = DownloadData(this, activityMain.xmlListView)
+			downloadData?.execute(feedUrl)
+			feedCachedUrl = feedUrl
+			downloadData = null
+		} else {
+			Log.d(TAG, "URL remains the same.")
+		}
 		Log.d(TAG, "downloadUrl(feedUrl:) done")
 	}
 
