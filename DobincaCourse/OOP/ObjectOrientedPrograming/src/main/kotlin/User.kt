@@ -1,4 +1,6 @@
-class User( var firstName: String, var lastName: String = "LastName", var age: Int = 999) {
+// data class overrides original functions in class: toString, equals and toHash
+
+data class User( var firstName: String, var lastName: String = "LastName", var age: Int = 999) {
 //    var name: String = firstName
 //        get() {
 //            return field // field identifier for param getter and setter
@@ -28,4 +30,26 @@ class User( var firstName: String, var lastName: String = "LastName", var age: I
     constructor(name: String, lastName: String) : this(name, lastName, 0) {
         println("Third constructor used with name: $name")
     }
+
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) {
+//            return true
+//        }
+//
+//        if (other is User) {
+//            return this.firstName == other.firstName &&
+//                    this.lastName == other.lastName &&
+//                    this.age == other.age
+//        }
+//
+//        return false
+//    }
+//
+//    override fun hashCode(): Int {
+//        return 0
+//    }
+//
+//    override fun toString(): String {
+//        return "User(firstname: $firstName, lastName: $lastName, age: $age)"
+//    }
 }

@@ -1,9 +1,9 @@
 fun main(args:Array<String>) {
 //    val car = Car("Ford", "Mustang", "Red", 2 )
-//    val user = User("John", "McCay", 67)
-//    val secondUser = User("Molly")
-//    val thirdUser = User("Bobby", "Allay")
-//    println(user.firstName)
+    val user = User("John", "McCay", 67)
+    val secondUser = User("Molly")
+    val thirdUser = User("Bobby", "Allay")
+    println(user)
 
 //    val result = Calculator.sum(2, 5)
 //    println(result)
@@ -42,6 +42,7 @@ fun main(args:Array<String>) {
 //
 //    listView.ListViewItems().displayItem(2)
 
+    /*
     val account = Account("Some Account")
 
     account.deposit(150)
@@ -49,6 +50,14 @@ fun main(args:Array<String>) {
     account.withdraw(75)
     val recalced = account.recalculateBalance()
     println("Recalculated: $recalced")
+
+     */
+
+//    val button = RoundButton("Open", "Portrait", 15)
+//    button.draw()
+//    val data = getData(Result.Success("Data fetched"))
+//    val dataError = getData(Result.Error("Data not found"))
+
 }
 
 enum class Direction(var direction: String, var distance: Int) {
@@ -72,4 +81,31 @@ class ListView(val items: Array<String>) {
             println(items[position])
         }
     }
+}
+
+fun getData(result: Result) {
+    when(result) {
+        is Result.Error -> {
+            result.showMessage()
+        }
+
+        is Result.Success -> {
+            result.showMessage()
+        }
+
+        is Result.Progress -> {
+            result.showMessage()
+        }
+    }
+}
+
+// sealed class useful in Kotlin instead of enum, as it is exhaustive
+// compile time safe
+sealed class Result(val message: String) {
+    fun showMessage() {
+        println("Message: $message")
+    }
+    class Success(message: String): Result(message)
+    class Error(message: String): Result(message)
+    class Progress(message: String): Result(message)
 }
