@@ -19,7 +19,7 @@ class SecondActivity : AppCompatActivity() {
 		backButton = findViewById(R.id.button2)
 		backButton.setOnClickListener {
 			val intent = intent
-			intent.putExtra()
+			intent.putExtra(Constants.MESSAGE_RESPONSE, "Hi back!")
 			setResult(Constants.RESULT_CODE, intent)
 			finish()
 		}

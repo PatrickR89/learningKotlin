@@ -17,7 +17,10 @@ class MainActivity : AppCompatActivity() {
 		setContentView(R.layout.activity_main)
 		val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 			if (it.resultCode == Constants.RESULT_CODE) {
-				val message = it.data.
+				it.data?.let {
+					val message = it.getStringExtra(Constants.MESSAGE_RESPONSE)
+					Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+				}
 			}
 		}
 		textViewData = findViewById(R.id.textViewData)
@@ -26,7 +29,8 @@ class MainActivity : AppCompatActivity() {
 			val intent = Intent(this@MainActivity, SecondActivity:: class.java)
 
 			intent.putExtra(Constants.INTENT_MESSAGE_KEY, "Hello!")
-			startActivity(intent)
+//			startActivity(intent)
+			getResult.launch(intent)
 		}
 
 
