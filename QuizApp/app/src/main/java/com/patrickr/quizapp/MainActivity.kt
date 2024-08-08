@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.patrickr.quizapp.ui.QuestionsActivity
+import com.patrickr.quizapp.utils.KeyConstants
 
 class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 		startButton.setOnClickListener {
 			if(!editTextName.text.isEmpty()) {
 				Intent(this@MainActivity, QuestionsActivity::class.java).also {
+					it.putExtra(KeyConstants.userName.key, editTextName.text.toString())
 					startActivity(it)
 					finish()
 				}

@@ -3,8 +3,24 @@ package com.patrickr.quizapp.utils
 import com.patrickr.quizapp.R
 import com.patrickr.quizapp.model.Question
 
+enum class KeyConstants() {
+	userName,
+	totalQuestions,
+	score;
+
+	val key: String
+		get() {
+			return when(this) {
+				userName -> "user_name"
+				totalQuestions -> "total_questions"
+				score -> "correct_answers"
+			}
+		}
+}
+
 class Constants {
 	companion object {
+
 		fun getQuestions(): MutableList<Question> {
 			val questions = mutableListOf<Question>()
 			val quest1 = Question(
