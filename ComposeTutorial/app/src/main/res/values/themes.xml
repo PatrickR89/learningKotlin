@@ -2,4 +2,5 @@
 <resources>
 
     <style name="Theme.ComposeTutorial" parent="android:Theme.Material.Light.NoActionBar" />
+    <item name="elevationOverlayEnabled" type="bool">false</item>
 </resources>

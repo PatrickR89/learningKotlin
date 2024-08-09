@@ -1,5 +1,6 @@
 package com.patrickr.composetutorial
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +49,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDefaults.backgroundColor
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.MutableState
@@ -59,6 +66,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.patrickr.composetutorial.ui.theme.ComposeTutorialTheme
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text
@@ -66,6 +80,7 @@ import kotlin.random.Random
 import kotlin.reflect.KProperty
 
 class MainActivity : ComponentActivity() {
+	@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 //		setContent {
@@ -106,7 +121,135 @@ class MainActivity : ComponentActivity() {
 
 		setContent {
 //			constraintLayout()
-		Navigation()
+//		Navigation()
+			val navController = rememberNavController()
+
+			Scaffold(
+				bottomBar = {
+					BottomNavBar(
+						items = navItems(),
+						navController = navController,
+						onItemClick = {
+							navController.navigate(it.route)
+						}
+					)
+				}
+			) {
+				BottomNavigation(navHostController = navController)
+			}
+		}
+	}
+
+	fun navItems(): List<BottomNavItem> {
+		return listOf(
+			BottomNavItem("Home", "home", Icons.Default.Home),
+			BottomNavItem("Chat", "chat", Icons.Default.Notifications, badgeCount = 25),
+			BottomNavItem("Settings", "setting", Icons.Default.Settings)
+		)
+	}
+
+	@Composable
+	fun BottomNavigation(navHostController: NavHostController) {
+		NavHost(navController = navHostController, startDestination = "home") {
+			composable("home") {
+				HomeScreen()
+			}
+			composable("chat") {
+				ChatScreen()
+			}
+			composable("setting") {
+				SettingsScreen()
+			}
+		}
+	}
+
+	@Composable
+	fun BottomNavBar(
+		items: List<BottomNavItem>,
+		navController: NavController,
+		modifier: Modifier = Modifier,
+		onItemClick: (BottomNavItem) -> Unit
+	) {
+		val backStackEntry = navController.currentBackStackEntryAsState()
+		androidx.compose.material.BottomNavigation(
+			modifier = modifier,
+			backgroundColor = Color.DarkGray,
+			elevation = 4.dp
+		) {
+			items.forEach {
+				val selected = it.route == backStackEntry.value?.destination?.route
+				println("Name: ${it.name}")
+				println("Current: ${backStackEntry.value?.destination?.route}")
+				BottomNavigationItem(
+					selected = selected,
+					onClick = { onItemClick(it) },
+					selectedContentColor = Color.Blue,
+					unselectedContentColor = Color.Gray,
+					icon = {
+						Column(
+							horizontalAlignment = Alignment.CenterHorizontally
+						) {
+							if (it.badgeCount > 0) {
+								BadgedBox(badge = {
+									Badge() {
+										Text(
+											text = it.badgeCount.toString()
+										)
+									}
+								}) {
+									Icon(
+										imageVector = it.icon,
+										contentDescription = it.name
+									)
+								}
+							} else {
+								Icon(
+									imageVector = it.icon,
+									contentDescription = it.name
+								)
+							}
+
+							if (selected) {
+								Text(
+									text = it.name,
+									textAlign = TextAlign.Center,
+									fontSize = 10.sp
+								)
+							}
+						}
+					}
+				)
+			}
+		}
+	}
+
+	@Composable
+	fun HomeScreen() {
+		Box(
+			modifier = Modifier.fillMaxSize(),
+			contentAlignment = Alignment.Center
+		) {
+			Text(text = "Home Screen")
+		}
+	}
+
+	@Composable
+	fun ChatScreen() {
+		Box(
+			modifier = Modifier.fillMaxSize(),
+			contentAlignment = Alignment.Center
+		) {
+			Text(text = "Chat Screen")
+		}
+	}
+
+	@Composable
+	fun SettingsScreen() {
+		Box(
+			modifier = Modifier.fillMaxSize(),
+			contentAlignment = Alignment.Center
+		) {
+			Text(text = "Settings Screen")
 		}
 	}
 
@@ -135,12 +278,16 @@ class MainActivity : ComponentActivity() {
 		}
 
 		ConstraintLayout(constraints, modifier = Modifier.fillMaxSize()) {
-			Box(modifier = Modifier
-				.background(Color.Green)
-				.layoutId("greenBox"))
-			Box(modifier = Modifier
-				.background(Color.Blue)
-				.layoutId("blueBox"))
+			Box(
+				modifier = Modifier
+					.background(Color.Green)
+					.layoutId("greenBox")
+			)
+			Box(
+				modifier = Modifier
+					.background(Color.Blue)
+					.layoutId("blueBox")
+			)
 		}
 	}
 
