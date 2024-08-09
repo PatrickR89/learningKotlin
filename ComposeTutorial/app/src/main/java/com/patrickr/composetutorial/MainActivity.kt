@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,6 +53,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.layoutId
 import com.patrickr.composetutorial.ui.theme.ComposeTutorialTheme
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text
@@ -98,57 +105,110 @@ class MainActivity : ComponentActivity() {
 //		}
 
 		setContent {
-			val scaffoldState = rememberScaffoldState()
-			var textFieldState by remember {
-				mutableStateOf("")
-			}
-			val scope = rememberCoroutineScope()
-			Scaffold(
-				modifier = Modifier.fillMaxSize(),
-				scaffoldState = scaffoldState
-			) { paddingValues ->
-
-				Column(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					verticalArrangement = Arrangement.Center,
-					modifier = Modifier
-						.fillMaxSize()
-						.padding(horizontal = 30.dp)
-				) {
-					TextField(
-						value = textFieldState,
-						label = { Text(text = "Enter your name.") },
-						onValueChange = {
-							textFieldState = it
-						},
-						singleLine = true,
-						modifier = Modifier.fillMaxWidth()
-					)
-					
-					Spacer(modifier = Modifier.height(16.dp))
-
-					Box(modifier = Modifier.fillMaxWidth(),
-					contentAlignment = Alignment.CenterEnd
-					) {
-
-						Button(onClick = { scope.launch {
-							scaffoldState.snackbarHostState.showSnackbar("Hello $textFieldState")
-						}}) {
-							Text(text = "Please greet me", color = Color.White)
-
-						}
-					}
-				}
-
-			}
-
+//			constraintLayout()
+		Navigation()
 		}
 	}
-}
 
-@Composable
-fun textFieldsButtonsSnackBars() {
+	@Composable
+	fun constraintLayout() {
+		val constraints = ConstraintSet {
+			val greenBox = createRefFor("greenBox")
+			val blueBox = createRefFor("blueBox")
 
+			constrain(greenBox) {
+				top.linkTo(parent.top)
+				start.linkTo(parent.start)
+				width = Dimension.value(100.dp)
+				height = Dimension.value(100.dp)
+			}
+
+			constrain(blueBox) {
+				top.linkTo(parent.top)
+				start.linkTo(greenBox.end, 10.dp)
+				width = Dimension.value(100.dp)
+				height = Dimension.value(100.dp)
+			}
+
+//			createHorizontalChain(greenBox, blueBox, chainStyle = ChainStyle.Spread)
+//			createVerticalChain(greenBox, blueBox, chainStyle = ChainStyle.SpreadInside)
+		}
+
+		ConstraintLayout(constraints, modifier = Modifier.fillMaxSize()) {
+			Box(modifier = Modifier
+				.background(Color.Green)
+				.layoutId("greenBox"))
+			Box(modifier = Modifier
+				.background(Color.Blue)
+				.layoutId("blueBox"))
+		}
+	}
+
+	@Composable
+	fun lists() {
+		LazyColumn {
+			items(1000) {
+				Text(
+					text = "Item $it",
+					fontSize = 24.sp,
+					fontWeight = FontWeight.Bold,
+					textAlign = TextAlign.Center,
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(vertical = 24.dp)
+				)
+			}
+		}
+	}
+
+	@Composable
+	fun textFieldsButtonsSnackBars() {
+		val scaffoldState = rememberScaffoldState()
+		var textFieldState by remember {
+			mutableStateOf("")
+		}
+		val scope = rememberCoroutineScope()
+		Scaffold(
+			modifier = Modifier.fillMaxSize(),
+			scaffoldState = scaffoldState
+		) { paddingValues ->
+
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.Center,
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(horizontal = 30.dp)
+			) {
+				TextField(
+					value = textFieldState,
+					label = { Text(text = "Enter your name.") },
+					onValueChange = {
+						textFieldState = it
+					},
+					singleLine = true,
+					modifier = Modifier.fillMaxWidth()
+				)
+
+				Spacer(modifier = Modifier.height(16.dp))
+
+				Box(
+					modifier = Modifier.fillMaxWidth(),
+					contentAlignment = Alignment.CenterEnd
+				) {
+
+					Button(onClick = {
+						scope.launch {
+							scaffoldState.snackbarHostState.showSnackbar("Hello $textFieldState")
+						}
+					}) {
+						Text(text = "Please greet me", color = Color.White)
+
+					}
+				}
+			}
+		}
+	}
 }
 
 

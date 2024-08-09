@@ -47,7 +47,7 @@ android {
 }
 
 dependencies {
-
+    def navVersion = "2.6.0"
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
@@ -71,6 +71,8 @@ dependencies {
     implementation "androidx.compose.animation:animation:1.6.8"
     implementation "androidx.compose.material3:material3:1.2.1"
 
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    implementation "androidx.navigation:navigation-compose:$navVersion"
     // glance
     // For AppWidgets support
 //    implementation "androidx.glance:glance-appwidget:1.1.0"
