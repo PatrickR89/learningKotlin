@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_one"
+        android:icon="@drawable/check_box"
+        android:title="@string/menu_item_one"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/item_two"
+        android:title="@string/menu_item_two"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/item_three"
+        android:title="@string/menu_item_three"
+        app:showAsAction="never"
+        >
+
+        <menu>
+            <item
+                android:id="@+id/sub_item_one"
+                android:title="@string/menu_sub_item_one"
+                />
+
+            <item
+                android:id="@+id/sub_item_two"
+                android:title="@string/menu_sub_item_two"
+                />
+        </menu>
+    </item>
+
+
+</menu>
