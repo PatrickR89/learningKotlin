@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:id="@+id/main_layout"
+    >
+
+    <ImageView
+        android:id="@+id/gallery_image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/drawing_constraint_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.patrickr.drawingapp.DrawingView
+        android:id="@+id/drawing_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_container"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/drawing_constraint_layout"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_container"
+        >
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/purple_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/purple_bg"
+            />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/red_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/red_bg" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/blue_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/blue_bg" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/orange_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/orange_bg" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/green_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/green_bg" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/brush_width"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_brush" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/color_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_color_picker" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/undo_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_undo" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/save_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_save" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/gallery_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/ic_gallery" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
