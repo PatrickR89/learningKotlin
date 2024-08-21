@@ -3,4 +3,5 @@
     <string name="edit_text_title">Enter title</string>
     <string name="edit_text_description">Enter description</string>
     <string name="button_save">Save</string>
+    <string name="button_load">Load</string>
 </resources>

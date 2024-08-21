@@ -31,4 +31,17 @@
         android:text="@string/button_save"
         />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_load"
+        android:id="@+id/load_button"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_view_data"
+        />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
