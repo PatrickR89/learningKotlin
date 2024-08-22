@@ -9,7 +9,7 @@ data class Note(
 	@ColumnInfo(name = "title_note")
 	val title: String,
 	val description: String,
-	val age: Int
+	val priority: Int
 	) {
 	@PrimaryKey(autoGenerate = true)
 	val id = 0
