@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.patrickr.roomapp.activities.AddEditActivity
 import com.patrickr.roomapp.adaptors.NoteAdaptor
 import com.patrickr.roomapp.adaptors.NoteOnClickListener
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity(), NoteOnClickListener {
 		)[NoteViewModel::class.java]
 
 		noteViewModel.allNotes.observe(this) { list ->
-			noteAdaptor.setNotes(list)
+			noteAdaptor.submitList(list)
 		}
 	}
 
@@ -85,7 +86,12 @@ class MainActivity : AppCompatActivity(), NoteOnClickListener {
 			}
 
 			override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-				noteViewModel.deleteNote(noteAdaptor.getNoteAt(viewHolder.adapterPosition))
+				val removedItem = noteAdaptor.getNoteAt(viewHolder.adapterPosition)
+				noteViewModel.deleteNote(removedItem)
+
+				Snackbar.make(this@MainActivity, recyclerView, "Deleted note ${removedItem.title}", Snackbar.LENGTH_LONG).setAction("Undo") {
+					noteViewModel.addNote(removedItem)
+				}.show()
 			}
 
 		}).attachToRecyclerView(recyclerView)
