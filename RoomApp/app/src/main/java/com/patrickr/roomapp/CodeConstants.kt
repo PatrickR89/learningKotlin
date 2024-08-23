@@ -1,18 +1,19 @@
 package com.patrickr.roomapp
 
 enum class CodeConstants {
-	requestCode;
+	addRequestCode,
+	editRequestCode;
 
 	val code: Int
 		get() = when(this) {
-			CodeConstants.requestCode -> {
-				 111
-			}
+			addRequestCode -> 1
+			editRequestCode -> 2
 		}
 }
 
 enum class KeyConstants {
 	title,
 	description,
-	priority;
+	priority,
+	note;
 }

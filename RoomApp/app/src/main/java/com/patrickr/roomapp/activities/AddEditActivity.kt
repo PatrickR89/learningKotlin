@@ -10,18 +10,21 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import com.patrickr.roomapp.CodeConstants
 import com.patrickr.roomapp.KeyConstants
+import com.patrickr.roomapp.Note
 import com.patrickr.roomapp.R
 
 class AddEditActivity : AppCompatActivity() {
 	private lateinit var editTextTitle: AppCompatEditText
 	private lateinit var editTextDescription: AppCompatEditText
 	private lateinit var numPicker: NumberPicker
+	private var noteId: Int? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_add_edit)
 
 		findViews()
+		openExistingNote()
 		title = "Add note"
 	}
 
@@ -33,6 +36,18 @@ class AddEditActivity : AppCompatActivity() {
 		numPicker.maxValue = 10
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+	}
+
+	fun openExistingNote() {
+		val note = intent.getSerializableExtra(KeyConstants.note.name, Note::class.java)
+		note?.let {
+			title = "Edit note"
+			editTextTitle.setText(it.title)
+			editTextDescription.setText(it.description)
+			numPicker.value = it.priority
+			noteId= it.id
+		}
+		println(note)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -59,15 +74,17 @@ class AddEditActivity : AppCompatActivity() {
 			Toast.makeText(this@AddEditActivity, "Cannot leave empty title or description!", Toast.LENGTH_SHORT).show()
 			return
 		}
-
+		var requestCode = CodeConstants.addRequestCode.code
+		val note = Note(title.toString(), description.toString(), priority)
+		noteId?.let {
+			note.id = it
+			requestCode = CodeConstants.editRequestCode.code
+		}
 		val intent = Intent().apply {
-			putExtra(KeyConstants.title.name, title)
-			putExtra(KeyConstants.description.name, description)
-			putExtra(KeyConstants.priority.name, priority)
+			putExtra(KeyConstants.note.name, note)
 		}
 
-		setResult(CodeConstants.requestCode.code, intent)
-
+		setResult(requestCode, intent)
 		finish()
 	}
 }
