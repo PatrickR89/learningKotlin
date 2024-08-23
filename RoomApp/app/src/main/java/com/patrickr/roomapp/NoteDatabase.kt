@@ -14,13 +14,20 @@ abstract class NoteDatabase: RoomDatabase() {
 
 		fun getInstance(context: Context): NoteDatabase {
 			return instance ?: synchronized(this) {
+				println("Creating database instance")
+				// REQUIRES KAPT!
 				val instance = Room.databaseBuilder(
 					context.applicationContext,
 					NoteDatabase::class.java,
 					"note_database"
-				).build()
-				this.instance = instance
-				return instance
+				)
+				println("Database instance created")
+				val builtInstance = instance.build()
+				println("Database instance built")
+
+				this.instance = builtInstance
+				println("Database instance created, storing and returning it")
+				return builtInstance
 			}
 		}
 	}

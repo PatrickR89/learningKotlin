@@ -28,6 +28,7 @@ class NoteAdaptor(): RecyclerView.Adapter<NoteAdaptor.NoteViewHolder>() {
 
 	public fun setNotes(notes: MutableList<Note>) {
 		notesList = notes
+		notifyDataSetChanged()
 	}
 
 	inner class NoteViewHolder(view: View): RecyclerView.ViewHolder(view) {

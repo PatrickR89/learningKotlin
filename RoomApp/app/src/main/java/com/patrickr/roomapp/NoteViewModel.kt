@@ -11,6 +11,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
 	val repository: NoteRepository
 
 	init{
+		println("Creating viewModel instance")
 		val dao = NoteDatabase.getInstance(application).getNotesDao()
 		repository = NoteRepository(dao)
 		allNotes = repository.allNotes
