@@ -4,10 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.view.contentcapture.ContentCaptureSession
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.patrickr.authapp.Event
 import com.patrickr.authapp.authentication.biometric.BiometricHandler
 import com.patrickr.authapp.authentication.biometric.BiometricHandlerListener
 import kotlinx.coroutines.CoroutineScope
@@ -43,22 +41,27 @@ class AuthenticationHandler(
 			return activity.applicationContext
 		}
 	private var authenticationService = AuthorizationService(context)
-//	private val biometricHandler = BiometricHandler(activity, this)
+	private val biometricHandler = BiometricHandler(activity, this)
 	var listener: AuthenticationHandlerListener? = null
 
 	fun fetchMetadata(): AuthorizationServiceConfiguration {
 		return AuthorizationServiceConfiguration(this.config.getAuthorizationUri(), this.config.getTokenUri())
 	}
 
-	fun getAuthorizationRedirectIntent(metadata: AuthorizationServiceConfiguration): Intent {
+	fun getAuthorizationRedirectIntent(metadata: AuthorizationServiceConfiguration, biometric: Boolean = false): Intent {
 		Log.d("AuthenticationHandler", "getAuthorizationRedirectIntent() called.")
-
+		val prompt = if(biometric) {
+			"none"
+		} else {
+			"login"
+		}
 		val request = AuthorizationRequest.Builder(
 			metadata,
 			this.config.clientId,
 			ResponseTypeValues.CODE,
 			config.getLoginRedirecUri()
 		).setScope(this.config.scope)
+			.setPrompt(prompt)
 			.build()
 		Log.d(ContentValues.TAG, request.jsonSerializeString())
 		Log.d("AuthenticationHandler", "Request built.")
@@ -175,7 +178,7 @@ class AuthenticationHandler(
 		return ServerCommunicationException(title, fullDescription)
 	}
 
-	fun startLogin() {
+	fun startLogin(biometric: Boolean = false) {
 		var metadata = this.state.metadata
 
 		CoroutineScope(Dispatchers.IO).launch {
@@ -187,7 +190,7 @@ class AuthenticationHandler(
 				withContext(Dispatchers.Main) {
 					this@AuthenticationHandler.state.metadata = metadata
 					metadata?.let {
-						val intent = getAuthorizationRedirectIntent(it)
+						val intent = getAuthorizationRedirectIntent(it, biometric)
 						this@AuthenticationHandler.listener?.loginStarted(intent)
 					}
 				}
@@ -228,9 +231,13 @@ class AuthenticationHandler(
 		}
 	}
 
+	fun startBiometricLogin() {
+		biometricHandler.startBiometricAuthentication()
+	}
+
 	override fun biometrcLoginFinished(success: Boolean, message: String?) {
 		if (success) {
-
+			startLogin(true)
 		}
 	}
 }

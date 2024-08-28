@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -79,8 +80,10 @@ class BiometricHandler(
 			}
 
 			val prompt = BiometricPrompt(this.activity, executor, callback)
-			val promptInfo = createBiometricPromptInfo()
-			prompt.authenticate(promptInfo)
+			CoroutineScope(Dispatchers.Main).launch {
+				val promptInfo = createBiometricPromptInfo()
+				prompt.authenticate(promptInfo)
+			}
 		}
 	}
 
@@ -88,6 +91,7 @@ class BiometricHandler(
 		return BiometricPrompt.PromptInfo
 			.Builder()
 			.setTitle("Biometric Login")
+			.setNegativeButtonText("Cancel")
 			.setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
 			.build()
 	}

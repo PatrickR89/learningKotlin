@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
 		observerViewModel()
 		handleBrowserOpen()
+		viewModel.appAuth.startBiometricLogin()
 	}
 
 	fun handleBrowserOpen() {

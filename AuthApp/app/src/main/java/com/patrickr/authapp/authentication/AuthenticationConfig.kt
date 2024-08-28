@@ -68,18 +68,3 @@ class AuthenticationConfig {
 		}
 	}
 }
-
-/*
-"client_id": "insurance_ios-code",
-  "response_type": "code",
-  "authorize_uri": "https://bozic-io-api-develop.azurewebsites.net/identity/connect/authorize",
-  "token_uri": "https://bozic-io-api-develop.azurewebsites.net/identity/connect/token",
-  "scope": "organization_api identity_api insurance_api offline_access",
-  "redirect_uris": [
-    "drp://auth/callback/login",
-    "drp://auth/callback/refresh",
-    "drp://auth/callback/logout"
-  ],
-  "keychain": true,
-  "use_pkce": true
- */
