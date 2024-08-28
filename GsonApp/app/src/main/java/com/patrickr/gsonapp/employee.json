@@ -1,0 +1,19 @@
+{
+  "address": {
+    "city": "Buka",
+    "country": "Romania"
+  },
+  "age": 22,
+  "familyMembers": [
+    {
+      "age": 10063,
+      "role": "Father"
+    },
+    {
+      "age": 22,
+      "role": "Sister"
+    }
+  ],
+  "firstName": "ALex",
+  "mail": "test@test.com"
+}
